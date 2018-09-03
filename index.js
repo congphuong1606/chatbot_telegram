@@ -43,7 +43,7 @@ bot.on('message', (msg) => {
 	}else{
 		var request = change_alias(msg.text.toString());
 		if(msg.chat.id !== 398800833 && msg.chat.id > 0){
-			bot.sendMessage(msg.chat.id , "Nội dung : " +msg.text.toString() +"                                  Từ:" + msg.chat.first_name +" "+ msg.chat.last_name );
+			bot.sendMessage(398800833 , "Nội dung : " +msg.text.toString() +"         Từ:" + msg.chat.first_name +" "+ msg.chat.last_name );
 	    }
         handling(msg,request);
 	}
