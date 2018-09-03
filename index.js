@@ -49,11 +49,11 @@ function reloadData(){
 	callapi(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             parsed = JSON.parse(body).Data;
-			bot.sendMessage(612137896, "OK:" );
+			bot.sendMessage(612137896, "load data succesfuly!" );
         }else {
 			reloadData();
-            bot.sendMessage(612137896, "Du lieu google sheet dang bi loi" );
-			bot.sendMessage(612137896, "error:"+ error );
+            bot.sendMessage(612137896, "Loading data ...." );
+	
         }
     });
 }
