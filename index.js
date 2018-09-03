@@ -33,26 +33,34 @@ var moment = require('moment');
 
 
 var timeStamp=0;
-
+var  parsed=[];
 
 bot.on('message', (msg) => {
-    var request = change_alias(msg.text.toString());
-    callapi(url, function (error, response, body) {
+	if(msg.text.toString()=="reload data sheet"){
+		reloadData();
+	}else{
+		var request = change_alias(msg.text.toString());
+        handling(msg,request);
+	}
+    
+});
+
+function reloadData(){
+	callapi(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            handling(error,response,body,msg,request);
+            parsed = JSON.parse(body);
         }else {
-			
+			reloadData();
             bot.sendMessage(612137896, "Du lieu google sheet dang bi loi" );
 			bot.sendMessage(612137896, "error:"+ error );
         }
-
     });
-});
+}
 
 
 
-function handling(error,response,body,msg,request) {
-    var  parsed = JSON.parse(body);
+function handling(msg,request) {
+    
     parsed.Data.forEach(element=>{
             var handingChat= true;
             if(request.search(change_alias(element.keyword)) === 0){
