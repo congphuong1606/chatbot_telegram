@@ -33,7 +33,7 @@ var moment = require('moment');
 
 
 var timeStamp=0;
-var  parsed=[];
+var  parsed=null;
 
 bot.on('message', (msg) => {
 	if(msg.text.toString()=="reload data sheet"){
@@ -60,8 +60,10 @@ function reloadData(){
 
 
 function handling(msg,request) {
-    
-    parsed.Data.forEach(element=>{
+    if(parsed!==null){
+		reloadData();
+    }else{
+		parsed.Data.forEach(element=>{
             var handingChat= true;
             if(request.search(change_alias(element.keyword)) === 0){
                 var items = [];
@@ -87,6 +89,7 @@ function handling(msg,request) {
                 return;
 
             }});
+	}
 
 }
 
