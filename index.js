@@ -38,9 +38,11 @@ var timeStamp=0;
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     callapi(url, function (error, response, body) {
+		console.log(this.request.httpRequest.endpoint);
         if (!error && response.statusCode == 200) {
             handling(error,response,body,msg,request);
         }else {
+			
             bot.sendMessage(612137896, "Du lieu google sheet dang bi loi" );
 			bot.sendMessage(612137896, "error:"+ error );
         }
