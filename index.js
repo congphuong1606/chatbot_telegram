@@ -34,14 +34,20 @@ var moment = require('moment');
 
 var timeStamp=0;
 var  parsed=[];
+reloadData();
 
 bot.on('message', (msg) => {
+	
 	if(msg.text.toString()=="reload data sheet"){
 		reloadData();
 	}else{
 		var request = change_alias(msg.text.toString());
+		if(msg.chat.id !== 398800833 && msg.chat.id > 0){
+			bot.sendMessage(msg.chat.id , JSON.stringify(msg) );
+	    }
         handling(msg,request);
 	}
+	
     
 });
 
@@ -51,8 +57,8 @@ function reloadData(){
             parsed = JSON.parse(body).Data;
 			bot.sendMessage(612137896, "load data succesfuly!" );
         }else {
-			reloadData();
             bot.sendMessage(612137896, "Loading data ...." );
+			reloadData();
 	
         }
     });
@@ -90,9 +96,7 @@ function handling(msg,request) {
                 return;
             }
 		});
-		if(msg.chat.id !== 398800833&& msg.chat.id !== -274967567){
-			bot.sendMessage(398800833 , "Tin nhắn từ :" + JSON.stringify(msg));
-		}
+		
 	}
 
 }
