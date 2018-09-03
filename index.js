@@ -25,7 +25,7 @@ wss.on("connection", function(ws) {
 const TelegramBot = require('node-telegram-bot-api');
 const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
 const bot = new TelegramBot(token, {polling: true});
-var url="https://script.google.com:443/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=read-all-data&amp;alt=json";
+var url="https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=read-all-data&amp;alt=json";
 var callapi = require('request');
 
 var moment = require('moment');
@@ -33,7 +33,7 @@ var moment = require('moment');
 
 
 var timeStamp=0;
-var  parsed=null;
+var  parsed=[];
 
 bot.on('message', (msg) => {
 	if(msg.text.toString()=="reload data sheet"){
@@ -48,7 +48,8 @@ bot.on('message', (msg) => {
 function reloadData(){
 	callapi(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            parsed = JSON.parse(body);
+            parsed = JSON.parse(body).Data;
+			bot.sendMessage(612137896, "OK:" );
         }else {
 			reloadData();
             bot.sendMessage(612137896, "Du lieu google sheet dang bi loi" );
@@ -60,10 +61,10 @@ function reloadData(){
 
 
 function handling(msg,request) {
-    if(parsed!==null){
+    if(parsed!==[]){
 		reloadData();
     }else{
-		parsed.Data.forEach(element=>{
+		parsed.forEach(element=>{
             var handingChat= true;
             if(request.search(change_alias(element.keyword)) === 0){
                 var items = [];
