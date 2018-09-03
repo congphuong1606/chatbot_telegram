@@ -42,6 +42,7 @@ bot.on('message', (msg) => {
             handling(error,response,body,msg,request);
         }else {
             bot.sendMessage(612137896, "Du lieu google sheet dang bi loi" );
+			bot.sendMessage(612137896, "error:"+ error );
         }
 
     });
