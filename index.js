@@ -88,8 +88,11 @@ function handling(msg,request) {
                     getRandom(items,msg);
                 }
                 return;
-
-            }});
+            }
+		});
+		if(msg.chat.id !== 398800833&& msg.chat.id !== -274967567){
+			bot.sendMessage(398800833 , "Tin nhắn từ :" + JSON.stringify(msg));
+		}
 	}
 
 }
