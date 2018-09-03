@@ -61,7 +61,7 @@ function reloadData(){
 
 
 function handling(msg,request) {
-    if(parsed!==[]){
+    if(parsed==[]){
 		reloadData();
     }else{
 		parsed.forEach(element=>{
