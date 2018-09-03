@@ -42,8 +42,8 @@ bot.on('message', (msg) => {
 		reloadData();
 	}else{
 		var request = change_alias(msg.text.toString());
-		if(msg.chat.id !== 398800833 && msg.chat.id > 0){
-			bot.sendMessage(398800833 , "Nội dung : " +msg.text.toString() +"         Từ:" + msg.chat.first_name +" "+ msg.chat.last_name );
+		if(msg.chat.id != 398800833 && msg.chat.id > 0){
+		  bot.forwardMessage(398800833,msg.chat.id ,msg.message_id);
 	    }
         handling(msg,request);
 	}
