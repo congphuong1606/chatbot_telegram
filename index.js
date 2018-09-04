@@ -51,8 +51,7 @@ bot.on('message', (msg) => {
 	    }
         handling(msg,request);
 	}
-	
-    
+
 });
 
 function reloadData(){
