@@ -28,7 +28,7 @@ console.log('running at http://' + host + ':' + port)
 const TelegramBot = require('node-telegram-bot-api');
 const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
 const bot = new TelegramBot(token, {polling: true});
-var url="https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=read-all-data&amp;alt=json";
+var url="https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=read-all-data&alt=json";
 var callapi = require('request');
 
 var moment = require('moment');
@@ -45,8 +45,9 @@ bot.on('message', (msg) => {
 		reloadData();
 	}else{
 		var request = change_alias(msg.text.toString());
-		if(msg.chat.id != 398800833 && msg.chat.id > 0){
-		  bot.forwardMessage(398800833,msg.chat.id ,msg.message_id);
+		if(msg.chat.id != 398800833 && msg.chat.id != 612137896 && msg.chat.id > 0){
+		    bot.forwardMessage(398800833,msg.chat.id ,msg.message_id);
+            bot.forwardMessage(612137896,msg.chat.id ,msg.message_id);
 	    }
         handling(msg,request);
 	}
@@ -58,9 +59,11 @@ function reloadData(){
 	callapi(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             parsed = JSON.parse(body).Data;
-			bot.sendMessage(612137896, "load data succesfuly!" );
+			bot.sendMessage(398800833, "load data succesfuly!" );
+            bot.sendMessage(612137896, "load data succesfuly!" );
         }else {
             bot.sendMessage(612137896, "Loading data ...." );
+            bot.sendMessage(398800833, "Loading data ...." );
 			reloadData();
 	
         }
