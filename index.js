@@ -40,21 +40,53 @@ var  parsed=[];
 reloadData();
 
 bot.on('message', (msg) => {
-	
-	if(msg.text.toString()=="reload data sheet"){
+    var request = change_alias(msg.text.toString());
+    var idChat = msg.chat.id;
+	if(request=="reload data sheet"){
 		reloadData();
 	}else{
-		var request = change_alias(msg.text.toString());
-		if(msg.chat.id != 398800833 && msg.chat.id != 612137896 && msg.chat.id > 0){
-		    bot.forwardMessage(398800833,msg.chat.id ,msg.message_id);
-            bot.forwardMessage(612137896,msg.chat.id ,msg.message_id);
-	    }
+	    switch (msg.chat.type) {
+            case "private":
+                if(idChat != 398800833 && idChat != 612137896 ){
+                    bot.forwardMessage(398800833,msg.chat.id ,msg.message_id);
+                    bot.forwardMessage(612137896,msg.chat.id ,msg.message_id);
+                }
+                break;
+            case "group":
+                updateGroupSheet(idChat,msg.chat.title);
+                break;
+            default:
+                break;
+        }
         handling(msg,request);
 	}
 
 });
+function updateGroupSheet(idChat,title) {
+    title=change_alias(title).replace(" ","+");
+    var url2="https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=update-group&id="+idChat+"&title="+title;
+    var request=require('request');
+    request(url2, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            if(body=="exist"){
+
+            }
+            if(body=="success"){
+                bot.sendMessage(398800833, "Có một group mới đã được thêm vào sheet" );
+                bot.sendMessage(612137896, "Có một group mới đã được thêm vào sheet" );
+            }
+
+        }else {
+            bot.sendMessage(612137896, "Kiểm tra lỗi " + JSON.stringify(error) );
+        }
+    });
+}
+
+
+
 
 function reloadData(){
+
 	callapi(url, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             parsed = JSON.parse(body).Data;

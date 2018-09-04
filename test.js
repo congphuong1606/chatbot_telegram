@@ -1,7 +1,13 @@
-var http=require('request');
-http.get('https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=read-all-data&alt=json', function(res){
+const TelegramBot = require('node-telegram-bot-api');
+const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
+const bot = new TelegramBot(token, {polling: true});
 
-        console.log("data: "+ res);
 
+
+
+
+bot.on('supergroup_chat_created', (msg) => {
+
+    console.log(JSON.stringify(msg))
 
 });
