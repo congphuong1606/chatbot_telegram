@@ -21,6 +21,9 @@ wss.on("connection", function(ws) {
         clearInterval(id)
     })
 });
+var host = server.address().address;
+var port = server.address().port;
+console.log('running at http://' + host + ':' + port)
 
 const TelegramBot = require('node-telegram-bot-api');
 const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
