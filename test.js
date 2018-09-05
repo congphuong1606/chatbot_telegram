@@ -1,13 +1,6 @@
-const TelegramBot = require('node-telegram-bot-api');
-const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
-const bot = new TelegramBot(token, {polling: true});
 
 
+var aaaa="🌟🌝mua ban coin uy tin🌝🌟"
+aaaa=aaaa.replace(/[^a-zA-Z0-9]/g,' ').trim().replace(/ /g,"+");
 
-
-
-bot.on('supergroup_chat_created', (msg) => {
-
-    console.log(JSON.stringify(msg))
-
-});
+console.log(aaaa);

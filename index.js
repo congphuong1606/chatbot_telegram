@@ -33,23 +33,23 @@ reloadData();
 
 var lastMsgGroup = {id: null, lastMsg: null, timeStamp: null};
 var listLastMsg = [];
-var stopOtherGroup= false;
+var stopOtherGroup = false;
 
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
     if (request === "reload data sheet") {
         reloadData();
-    } else if(request==="/stopothergroup" ){
-        if(msg.from.id=== 398800833 || msg.from.id=== 612137896 ){
-            stopOtherGroup =true;
+    } else if (request === "/stopothergroup") {
+        if (msg.from.id === 398800833 || msg.from.id === 612137896) {
+            stopOtherGroup = true;
             bot.sendMessage(398800833, "stoped other group");
             bot.sendMessage(612137896, "stoped other group");
         }
 
-    } else if(request==="/openothergroup" ){
-        if(msg.from.id=== 398800833 || msg.from.id=== 612137896 ){
-            stopOtherGroup =false;
+    } else if (request === "/openothergroup") {
+        if (msg.from.id === 398800833 || msg.from.id === 612137896) {
+            stopOtherGroup = false;
             bot.sendMessage(398800833, "opened other group");
             bot.sendMessage(612137896, "opened other group");
         }
@@ -67,21 +67,21 @@ bot.on('message', (msg) => {
             case "group":
 
                 updateGroupSheet(idChat, msg.chat.title);
-                if(stopOtherGroup){
-                    if(idChat===-274967567){
+                if (stopOtherGroup) {
+                    if (idChat === -274967567) {
                         handling(msg, request);
                     }
-                }else {
+                } else {
                     handling(msg, request);
                 }
                 break;
             case "supergroup":
                 updateGroupSheet(idChat, msg.chat.title);
-                if(stopOtherGroup){
-                    if(idChat===-274967567){
+                if (stopOtherGroup) {
+                    if (idChat === -274967567) {
                         handling(msg, request);
                     }
-                }else {
+                } else {
                     handling(msg, request);
                 }
                 break;
@@ -95,11 +95,10 @@ bot.on('message', (msg) => {
 
 
 function updateGroupSheet(idChat, title) {
-    var t= change_alias(title);
-    console.log("t: "+ t);
-    title = t.replace(/ /g, "+");
-    title = title.replace(/!/g, "");
-    console.log(idChat + "  title: "+ title);
+    title = change_alias(title);
+    title = title.replace(/[^a-zA-Z0-9]/g, ' ').trim().replace(/ /g, "+");
+    ;
+    console.log(idChat + "  title: " + title);
     var url2 = baseUrl + "/exec?action=update-group&id=" + idChat + "&title=" + title;
     var request = require('request');
     request(url2, function (error, response, body) {
@@ -114,7 +113,8 @@ function updateGroupSheet(idChat, title) {
             }
 
         } else {
-            bot.sendMessage(612137896, "Kiểm tra lỗi " + JSON.stringify(error));
+            console.log(url2);
+            bot.sendMessage(612137896, "Kiểm tra lỗi : "+url2);
         }
     });
 }
@@ -192,7 +192,7 @@ function checkStringAsAnswer(request, keyword) {
         });
     });
     if (number === 1) {
-        if(request.charAt(0)!=='/'){
+        if (request.charAt(0) !== '/') {
             if (arrayRequest.length > 1 && arrayKeyword.length > 1) {
                 number = 0;
             }
