@@ -41,7 +41,7 @@ bot.on('message', (msg) => {
     if (request === "reload data sheet") {
         reloadData();
     } else if(request==="/stopOtherGroup" ){
-        if(idChat=== 398800833|| idChat=== 612137896 ){
+        if(msg.from.id=== 398800833 || msg.from.id=== 612137896 ){
             stopOtherGroup =true;
             bot.sendMessage(398800833, "stoped other group");
             bot.sendMessage(612137896, "stoped other group");
