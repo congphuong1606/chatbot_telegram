@@ -193,7 +193,7 @@ function checkStringAsAnswer(request, keyword) {
     });
     if (number === 1) {
         if(request.charAt(0)!=='/'){
-            if (arrayRequest.length > 1 || arrayKeyword.length > 1) {
+            if (arrayRequest.length > 1 && arrayKeyword.length > 1) {
                 number = 0;
             }
         }
