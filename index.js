@@ -33,27 +33,39 @@ reloadData();
 
 var lastMsgGroup = {id: null, lastMsg: null, timeStamp: null};
 var listLastMsg = [];
+var stopOtherGroup= false;
 
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
     if (request == "reload data sheet") {
         reloadData();
-    } else {
+    } else if(request=="/stopOtherGroup"){
+        stopOtherGroup =true;
+
+    }else {
         switch (msg.chat.type) {
             case "private":
                 if (idChat != 398800833 && idChat != 612137896) {
                     bot.forwardMessage(398800833, msg.chat.id, msg.message_id);
                     bot.forwardMessage(612137896, msg.chat.id, msg.message_id);
                 }
+                handling(msg, request);
                 break;
             case "group":
                 updateGroupSheet(idChat, msg.chat.title);
+                if(stopOtherGroup){
+                    if(idChat==-274967567){
+                        handling(msg, request);
+                    }
+                }else {
+                    handling(msg, request);
+                }
                 break;
             default:
                 break;
         }
-        handling(msg, request);
+
     }
 
 });
@@ -153,8 +165,10 @@ function checkStringAsAnswer(request, keyword) {
         });
     });
     if (number === 1) {
-        if (arrayRequest.length > 1 || arrayKeyword.length > 1) {
-            number = 0;
+        if(arrayRequest.charAt(0)!=='/'){
+            if (arrayRequest.length > 1 || arrayKeyword.length > 1) {
+                number = 0;
+            }
         }
     }
     return number;
