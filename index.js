@@ -6,7 +6,6 @@ var port = process.env.PORT || 3000
 app.use(express.static(__dirname + "/"))
 var server = http.createServer(app)
 server.listen(port)
-console.log("http server listening on %d", port)
 var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 wss.on("connection", function (ws) {
@@ -15,16 +14,10 @@ wss.on("connection", function (ws) {
         })
     }, 1000)
 
-    console.log("websocket connection open")
-
     ws.on("close", function () {
-        console.log("websocket connection close")
         clearInterval(id)
     })
 });
-var host = server.address().address;
-var port = server.address().port;
-console.log('running at http://' + host + ':' + port)
 
 const TelegramBot = require('node-telegram-bot-api');
 const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
@@ -38,8 +31,8 @@ var baseUrl = "https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0T
 
 reloadData();
 
-var lastMsgGroup = {id:null,lastMsg:null,timeStamp:null};
-var listLastMsg =[];
+var lastMsgGroup = {id: null, lastMsg: null, timeStamp: null};
+var listLastMsg = [];
 
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
@@ -64,8 +57,6 @@ bot.on('message', (msg) => {
     }
 
 });
-
-
 
 
 function updateGroupSheet(idChat, title) {
@@ -106,61 +97,68 @@ function reloadData() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function handling(msg, request) {
     if (parsed == []) {
         reloadData();
     } else {
-        parsed.forEach(element => {
-            var handingChat = true;
-            if (request.search(change_alias(element.keyword)) === 0) {
+        var reply = {number: 0, value: []};
+        parsed.forEach(item => {
+            var keyword = change_alias(item.keyword);
+            var newNumber = checkStringAsAnswer(request, change_alias(keyword));
+            if (newNumber >= reply.number && newNumber !== 0) {
                 var items = [];
-                items.push(element.answer);
-                if (element.answer2 != '') {
-                    items.push(element.answer2)
+                items.push(item.answer);
+                if (item.answer2 != '') {
+                    items.push(item.answer2)
                 }
                 ;
-                if (element.answer3 != '') {
-                    items.push(element.answer3)
+                if (item.answer3 != '') {
+                    items.push(item.answer3)
                 }
                 ;
-                if (element.answer4 != '') {
-                    items.push(element.answer4)
+                if (item.answer4 != '') {
+                    items.push(item.answer4)
                 }
                 ;
-                if (element.answer5 != '') {
-                    items.push(element.answer5)
+                if (item.answer5 != '') {
+                    items.push(item.answer5)
                 }
                 ;
-                if (items.length == 1) {
-                    sendMsg(msg.chat.id, items[0]);
-                }
-                if (items.length > 1) {
-                    getRandom(items, msg);
-                }
-                return;
+                reply = {number: newNumber, value: items};
             }
         });
+        if (reply.number > 0) {
+            if (reply.value.length == 1) {
+                sendMsg(msg.chat.id, reply.value[0]);
+            }
+            if (reply.value.length > 1) {
+                getRandom(reply.value, msg);
+            }
+            console.log(JSON.stringify(reply));
+        }
 
     }
+}
+
+
+function checkStringAsAnswer(request, keyword) {
+    var arrayRequest = request.split(" ");
+    var arrayKeyword = keyword.split(" ");
+    var number = 0;
+    arrayRequest.forEach(itemRequest => {
+        arrayKeyword.forEach(itemKeyword => {
+            if (itemRequest === itemKeyword) {
+                number++;
+            }
+        });
+    });
+    if (number === 1) {
+        if (arrayRequest.length > 1 || arrayKeyword.length > 1) {
+            number = 0;
+        }
+    }
+    return number;
+
 
 }
 
@@ -169,7 +167,7 @@ var tam = "";
 function getRandom(items, msg) {
     var messs = items[Math.floor(Math.random() * items.length)];
     if (tam != messs) {
-        bot.sendMessage(msg.chat.id, messs);
+        sendMsg(msg.chat.id, messs);
         tam = messs;
     } else {
         getRandom(items, msg);
@@ -180,39 +178,38 @@ var listTime = [20, 25, 30, 15];
 
 
 function sendMsg(id, msss) {
-    if(listLastMsg.length>0){
-        var flag=true;
-        listLastMsg.forEach(element=>{
-            if(id==element.id){
-                if(msss==element.lastMsg){
+    if (listLastMsg.length > 0) {
+        var flag = true;
+        listLastMsg.forEach(element => {
+            if (id == element.id) {
+                if (msss == element.lastMsg) {
                     var duration = parseInt((moment().valueOf() - element.timeStamp) / 1000);
-                    if (duration > 59) {
+                    if (duration > 50) {
                         bot.sendMessage(id, msss, {parse_mode: "HTML"});
-                        listLastMsg =listLastMsg.filter(obj => id !== obj.id);
-                        listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+                        listLastMsg = listLastMsg.filter(obj => id !== obj.id);
+                        listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
                     }
-                }else {
+                } else {
                     var duration = parseInt((moment().valueOf() - element.timeStamp) / 1000);
                     if (duration > 20) {
                         bot.sendMessage(id, msss, {parse_mode: "HTML"});
-                        listLastMsg =listLastMsg.filter(obj => id !== obj.id);
-                        listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+                        listLastMsg = listLastMsg.filter(obj => id !== obj.id);
+                        listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
                     }
                 }
-                flag=false;
+                flag = false;
                 return;
             }
         });
-        if(flag){
+        if (flag) {
             bot.sendMessage(id, msss, {parse_mode: "HTML"});
-            listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+            listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
         }
 
-    }else {
+    } else {
         bot.sendMessage(id, msss, {parse_mode: "HTML"});
-        listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+        listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
     }
-    console.log(JSON.stringify(listLastMsg));
 }
 
 
