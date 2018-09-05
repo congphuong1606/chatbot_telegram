@@ -109,6 +109,8 @@ function updateGroupSheet(idChat, title) {
             }
 
         } else {
+            updateGroupSheet(idChat, title);
+            console.log(idChat + "  title: "+ title);
             bot.sendMessage(612137896, "Kiểm tra lỗi " + JSON.stringify(error));
         }
     });
@@ -169,7 +171,6 @@ function handling(msg, request) {
             if (reply.value.length > 1) {
                 getRandom(reply.value, msg);
             }
-            console.log(JSON.stringify(reply));
         }
 
     }
@@ -188,18 +189,13 @@ function checkStringAsAnswer(request, keyword) {
         });
     });
     if (number === 1) {
-        console.log("number = 1 ");
         if(request.charAt(0)!=='/'){
-            console.log("setNumber =0 ");
             if (arrayRequest.length > 1 || arrayKeyword.length > 1) {
                 number = 0;
             }
         }
     }
-
     return number;
-
-
 }
 
 var tam = "";
