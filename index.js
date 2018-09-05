@@ -56,7 +56,6 @@ bot.on('message', (msg) => {
 
     }
     else {
-        console.log("msg: " +JSON.stringify(msg));
         switch (msg.chat.type) {
             case "private":
                 if (idChat !== 398800833 && idChat !== 612137896) {
