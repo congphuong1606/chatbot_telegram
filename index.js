@@ -105,9 +105,10 @@ function updateGroupSheet(idChat, title) {
     request(url2, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             if (body == "exist") {
-
+                console.log("exist");
             }
             if (body == "success") {
+                console.log("success");
                 bot.sendMessage(398800833, "Có một group mới đã được thêm vào sheet");
                 bot.sendMessage(612137896, "Có một group mới đã được thêm vào sheet");
             }
