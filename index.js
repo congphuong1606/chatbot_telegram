@@ -35,32 +35,43 @@ var lastMsgGroup = {id: null, lastMsg: null, timeStamp: null};
 var listLastMsg = [];
 var stopOtherGroup = false;
 
+
+var userBoss = 398800833;
+var userBoss1 = 612137896;
+var groupBoss = -274967567;
+
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
     if (request === "reload data sheet") {
         reloadData();
     } else if (request === "/stopothergroup") {
-        if (msg.from.id === 398800833 || msg.from.id === 612137896) {
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             stopOtherGroup = true;
-            bot.sendMessage(398800833, "stoped other group");
-            bot.sendMessage(612137896, "stoped other group");
+            bot.sendMessage(userBoss, "stoped other group");
+            bot.sendMessage(userBoss1, "stoped other group");
         }
 
     } else if (request === "/openothergroup") {
-        if (msg.from.id === 398800833 || msg.from.id === 612137896) {
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             stopOtherGroup = false;
-            bot.sendMessage(398800833, "opened other group");
-            bot.sendMessage(612137896, "opened other group");
+            bot.sendMessage(userBoss, "opened other group");
+            bot.sendMessage(userBoss1, "opened other group");
         }
 
+    }else if(request === "/chattoallgroup"){
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
+            chatToALLGroup();
+        }else {
+            bot.sendMessage(msg.from.id, "Lệnh này không dành cho bạn (/chattoallgroup)");
+        }
     }
     else {
         switch (msg.chat.type) {
             case "private":
-                if (idChat !== 398800833 && idChat !== 612137896) {
-                    bot.forwardMessage(398800833, msg.chat.id, msg.message_id);
-                    bot.forwardMessage(612137896, msg.chat.id, msg.message_id);
+                if (idChat !== userBoss && idChat !== userBoss1) {
+                    bot.forwardMessage(userBoss, msg.chat.id, msg.message_id);
+                    bot.forwardMessage(userBoss1, msg.chat.id, msg.message_id);
                 }
                 handling(msg, request);
                 break;
@@ -68,7 +79,7 @@ bot.on('message', (msg) => {
 
                 updateGroupSheet(idChat, msg.chat.title);
                 if (stopOtherGroup) {
-                    if (idChat === -274967567) {
+                    if (idChat === groupBoss) {
                         handling(msg, request);
                     }
                 } else {
@@ -78,7 +89,7 @@ bot.on('message', (msg) => {
             case "supergroup":
                 updateGroupSheet(idChat, msg.chat.title);
                 if (stopOtherGroup) {
-                    if (idChat === -274967567) {
+                    if (idChat === groupBoss) {
                         handling(msg, request);
                     }
                 } else {
@@ -91,13 +102,31 @@ bot.on('message', (msg) => {
 
     }
 
+
 });
 
+function chatToALLGroup(chatId) {
+    var url2 = baseUrl + "/exec?action=get-all-group";
+    var request = require('request');
+    request(url2, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var listGroup= JSON.parse(body).Data;
+            var tinNhan= JSON.parse(body).msgToGroup;
+            if(tinNhan!==""){
+                listGroup.forEach(item=>{
+                    bot.sendMessage(userBoss1, tinNhan +" to Group " +item.id,{parse_mode: "HTML"});
+                });
+
+            }
+        } else {
+            bot.sendMessage(chatId, "Vui lòng kiểm tra sheet hoặc lỗi, không thể chat");
+        }
+    });
+}
 
 function updateGroupSheet(idChat, title) {
     title = change_alias(title);
     title = title.replace(/[^a-zA-Z0-9]/g, ' ').trim().replace(/ /g, "+");
-    ;
     console.log(idChat + "  title: " + title);
     var url2 = baseUrl + "/exec?action=update-group&id=" + idChat + "&title=" + title;
     var request = require('request');
@@ -108,13 +137,13 @@ function updateGroupSheet(idChat, title) {
             }
             if (body == "success") {
                 console.log("success");
-                bot.sendMessage(398800833, "Có một group mới đã được thêm vào sheet");
-                bot.sendMessage(612137896, "Có một group mới đã được thêm vào sheet");
+                bot.sendMessage(userBoss, "Có một group mới đã được thêm vào sheet");
+                bot.sendMessage(userBoss1, "Có một group mới đã được thêm vào sheet");
             }
 
         } else {
             console.log(url2);
-            bot.sendMessage(612137896, "Kiểm tra lỗi : "+url2);
+            bot.sendMessage(userBoss1, "Kiểm tra lỗi : "+url2);
         }
     });
 }
@@ -125,11 +154,11 @@ function reloadData() {
     callapi(urlGetALL, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             parsed = JSON.parse(body).Data;
-            bot.sendMessage(398800833, "server update succesfuly!");
-            bot.sendMessage(612137896, "server update succesfuly!");
+            bot.sendMessage(userBoss, "server update succesfuly!");
+            bot.sendMessage(userBoss1, "server update succesfuly!");
         } else {
-            bot.sendMessage(612137896, "Loading data ....");
-            bot.sendMessage(398800833, "Loading data ....");
+            bot.sendMessage(userBoss1, "Loading data ....");
+            bot.sendMessage(userBoss, "Loading data ....");
             reloadData();
 
         }
