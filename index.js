@@ -56,6 +56,7 @@ bot.on('message', (msg) => {
 
     }
     else {
+        console.log("msg: " +JSON.stringify(msg));
         switch (msg.chat.type) {
             case "private":
                 if (idChat !== 398800833 && idChat !== 612137896) {
@@ -66,6 +67,16 @@ bot.on('message', (msg) => {
                 break;
             case "group":
 
+                updateGroupSheet(idChat, msg.chat.title);
+                if(stopOtherGroup){
+                    if(idChat===-274967567){
+                        handling(msg, request);
+                    }
+                }else {
+                    handling(msg, request);
+                }
+                break;
+            case "supergroup":
                 updateGroupSheet(idChat, msg.chat.title);
                 if(stopOtherGroup){
                     if(idChat===-274967567){
