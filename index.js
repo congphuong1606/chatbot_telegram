@@ -98,6 +98,7 @@ function updateGroupSheet(idChat, title) {
     var t= change_alias(title);
     console.log("t: "+ t);
     title = t.replace(" ", "+");
+    console.log(idChat + "  title: "+ title);
     var url2 = baseUrl + "/exec?action=update-group&id=" + idChat + "&title=" + title;
     var request = require('request');
     request(url2, function (error, response, body) {
@@ -111,8 +112,6 @@ function updateGroupSheet(idChat, title) {
             }
 
         } else {
-            updateGroupSheet(idChat, title);
-            console.log(idChat + "  title: "+ title);
             bot.sendMessage(612137896, "Kiểm tra lỗi " + JSON.stringify(error));
         }
     });
