@@ -40,14 +40,22 @@ bot.on('message', (msg) => {
     var idChat = msg.chat.id;
     if (request === "reload data sheet") {
         reloadData();
-    } else if(request==="/stopOtherGroup" ){
+    } else if(request==="/stopothergroup" ){
         if(msg.from.id=== 398800833 || msg.from.id=== 612137896 ){
             stopOtherGroup =true;
             bot.sendMessage(398800833, "stoped other group");
             bot.sendMessage(612137896, "stoped other group");
         }
 
-    }else {
+    } else if(request==="/openothergroup" ){
+        if(msg.from.id=== 398800833 || msg.from.id=== 612137896 ){
+            stopOtherGroup =false;
+            bot.sendMessage(398800833, "opened other group");
+            bot.sendMessage(612137896, "opened other group");
+        }
+
+    }
+    else {
         switch (msg.chat.type) {
             case "private":
                 if (idChat !== 398800833 && idChat !== 612137896) {
@@ -57,6 +65,7 @@ bot.on('message', (msg) => {
                 handling(msg, request);
                 break;
             case "group":
+
                 updateGroupSheet(idChat, msg.chat.title);
                 if(stopOtherGroup){
                     if(idChat===-274967567){
@@ -144,7 +153,7 @@ function handling(msg, request) {
             }
         });
         if (reply.number > 0) {
-            if (reply.value.length == 1) {
+            if (reply.value.length === 1) {
                 sendMsg(msg.chat.id, reply.value[0]);
             }
             if (reply.value.length > 1) {
@@ -169,12 +178,15 @@ function checkStringAsAnswer(request, keyword) {
         });
     });
     if (number === 1) {
-        if(arrayRequest.charAt(0)!=='/'){
+        console.log("number = 1 ");
+        if(request.charAt(0)!=='/'){
+            console.log("setNumber =0 ");
             if (arrayRequest.length > 1 || arrayKeyword.length > 1) {
                 number = 0;
             }
         }
     }
+
     return number;
 
 
