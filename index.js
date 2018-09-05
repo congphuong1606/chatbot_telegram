@@ -95,7 +95,9 @@ bot.on('message', (msg) => {
 
 
 function updateGroupSheet(idChat, title) {
-    title = change_alias(title).replace(" ", "+");
+    var t= change_alias(title);
+    console.log("t: "+ t);
+    title = t.replace(" ", "+");
     var url2 = baseUrl + "/exec?action=update-group&id=" + idChat + "&title=" + title;
     var request = require('request');
     request(url2, function (error, response, body) {
