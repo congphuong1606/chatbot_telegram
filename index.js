@@ -38,15 +38,19 @@ var stopOtherGroup= false;
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-    if (request == "reload data sheet") {
+    if (request === "reload data sheet") {
         reloadData();
-    } else if(request=="/stopOtherGroup"){
-        stopOtherGroup =true;
+    } else if(request==="/stopOtherGroup" ){
+        if(idChat=== 398800833|| idChat=== 612137896 ){
+            stopOtherGroup =true;
+            bot.sendMessage(398800833, "stoped other group");
+            bot.sendMessage(612137896, "stoped other group");
+        }
 
     }else {
         switch (msg.chat.type) {
             case "private":
-                if (idChat != 398800833 && idChat != 612137896) {
+                if (idChat !== 398800833 && idChat !== 612137896) {
                     bot.forwardMessage(398800833, msg.chat.id, msg.message_id);
                     bot.forwardMessage(612137896, msg.chat.id, msg.message_id);
                 }
@@ -55,7 +59,7 @@ bot.on('message', (msg) => {
             case "group":
                 updateGroupSheet(idChat, msg.chat.title);
                 if(stopOtherGroup){
-                    if(idChat==-274967567){
+                    if(idChat===-274967567){
                         handling(msg, request);
                     }
                 }else {
