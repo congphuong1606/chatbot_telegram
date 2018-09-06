@@ -96,7 +96,6 @@ bot.on('message', (msg) => {
                 updateGroupSheet(idChat, msg.chat.title,msg);
                 break;
             case "supergroup":
-                console.log("bbbbbbbbbbbbb: "+request);
                 if (stopOtherGroup) {
                     if (idChat === groupBoss) {
                         handling(msg, request);
@@ -223,11 +222,9 @@ function handling(msg, request) {
     if (parsed === []) {
         reloadData();
     } else {
-        var reply = {number: 0, value: []};
+        let reply = {number: 0, value: []};
         parsed.forEach(item => {
-            var keyword = change_alias(item.keyword);
-            console.log(keyword);
-            var newNumber = checkStringAsAnswer(request, keyword);
+            const newNumber = checkStringAsAnswer(request, change_alias(item.keyword));
             if (newNumber >= reply.number && newNumber !== 0) {
                 var items = [];
                 items.push(item.answer);
@@ -264,9 +261,9 @@ function handling(msg, request) {
 
 
 function checkStringAsAnswer(request, keyword) {
-    var arrayRequest = request.split(" ");
-    var arrayKeyword = keyword.split(" ");
-    var number = 0;
+    const arrayRequest = request.split(" ");
+    const arrayKeyword = keyword.split(" ");
+    let number = 0;
     arrayRequest.forEach(itemRequest => {
         arrayKeyword.forEach(itemKeyword => {
             if (itemRequest === itemKeyword) {
@@ -289,7 +286,7 @@ function checkStringAsAnswer(request, keyword) {
 var tam = "";
 
 function getRandom(items, msg) {
-    var messs = items[Math.floor(Math.random() * items.length)];
+    const messs = items[Math.floor(Math.random() * items.length)];
     if (tam !==messs) {
         sendMsg(msg.chat.id, messs);
         tam = messs;
@@ -303,7 +300,7 @@ var listTime = [20, 25, 30, 15];
 
 function sendMsg(id, msss) {
     if (listLastMsg.length > 0) {
-        var flag = true;
+        let flag = true;
         listLastMsg.forEach(element => {
             if (id === element.id) {
                 if (msss === element.lastMsg) {
