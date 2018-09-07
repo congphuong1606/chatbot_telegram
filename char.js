@@ -11,5 +11,6 @@ module.exports = function(alias) {
     str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ");
     str = str.replace(/ + /g, " ");
     str = str.trim();
+
     return str;
 };

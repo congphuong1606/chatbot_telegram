@@ -6,7 +6,6 @@ var port = process.env.PORT || 3000
 app.use(express.static(__dirname + "/"))
 var server = http.createServer(app)
 server.listen(port)
-console.log("http server listening on %d", port)
 var wss = new WebSocketServer({server: server})
 console.log("websocket server created")
 wss.on("connection", function (ws) {
@@ -15,16 +14,10 @@ wss.on("connection", function (ws) {
         })
     }, 1000)
 
-    console.log("websocket connection open")
-
     ws.on("close", function () {
-        console.log("websocket connection close")
         clearInterval(id)
     })
 });
-var host = server.address().address;
-var port = server.address().port;
-console.log('running at http://' + host + ':' + port)
 
 const TelegramBot = require('node-telegram-bot-api');
 const token = '694156014:AAGSi9FtWPbHODSAowRylOPtHmLUPDSN2i4';
@@ -38,54 +31,172 @@ var baseUrl = "https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0T
 
 reloadData();
 
-var lastMsgGroup = {id:null,lastMsg:null,timeStamp:null};
-var listLastMsg =[];
+var lastMsgGroup = {id: null, lastMsg: null, timeStamp: null};
+var listLastMsg = [];
+var stopOtherGroup = false;
+
+
+var userBoss = 398800833;
+var userBoss1 = 612137896;
+var groupBoss = -274967567;
 
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-    if (request == "reload data sheet") {
+
+    if (request === "reload data sheet") {
         reloadData();
-    } else {
+    } else if (request === "/stopothergroup") {
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
+            stopOtherGroup = true;
+            bot.sendMessage(userBoss, "stoped other group");
+            bot.sendMessage(userBoss1, "stoped other group");
+        }
+
+    } else if (request === "/openothergroup") {
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
+            stopOtherGroup = false;
+            bot.sendMessage(userBoss, "opened other group");
+            bot.sendMessage(userBoss1, "opened other group");
+        }
+
+    }else if(request === "/chattoallgroup"){
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
+            chatToALLGroup();
+        }else {
+            bot.sendMessage(msg.from.id, "Lệnh này không dành cho bạn (/chattoallgroup)");
+        }
+    }
+    else if(request === "/testchattoallgroup"){
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
+            testChatToALLGroup(idChat);
+            console.log("testchattoallgroup");
+        }else {
+            bot.sendMessage(msg.from.id, "Lệnh này không dành cho bạn (/chattoallgroup)");
+        }
+    }
+    else {
+
         switch (msg.chat.type) {
             case "private":
-                if (idChat != 398800833 && idChat != 612137896) {
-                    bot.forwardMessage(398800833, msg.chat.id, msg.message_id);
-                    bot.forwardMessage(612137896, msg.chat.id, msg.message_id);
+                if (idChat !== userBoss && idChat !== userBoss1) {
+                    bot.forwardMessage(userBoss, msg.chat.id, msg.message_id);
+                    bot.forwardMessage(userBoss1, msg.chat.id, msg.message_id);
                 }
+                handling(msg, request);
                 break;
             case "group":
-                updateGroupSheet(idChat, msg.chat.title);
+                if (stopOtherGroup) {
+                    if (idChat === groupBoss) {
+                        handling(msg, request);
+                    }
+                } else {
+                    handling(msg, request);
+                }
+                updateGroupSheet(idChat, msg.chat.title,msg);
+                break;
+            case "supergroup":
+                if (stopOtherGroup) {
+                    if (idChat === groupBoss) {
+                        handling(msg, request);
+                    }
+                } else {
+                    handling(msg, request);
+                }
+                updateGroupSheet(idChat, msg.chat.title,msg);
                 break;
             default:
                 break;
         }
-        handling(msg, request);
+
     }
 
+
 });
-
-
-
-
-function updateGroupSheet(idChat, title) {
-    title = change_alias(title).replace(" ", "+");
-    var url2 = baseUrl + "/exec?action=update-group&id=" + idChat + "&title=" + title;
+function testChatToALLGroup(idChat) {
+    var url2 = baseUrl + "/exec?action=get-all-group";
     var request = require('request');
     request(url2, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            if (body == "exist") {
+        if (!error && response.statusCode === 200) {
+            var listGroup= JSON.parse(body).Data;
+            var tinNhan= JSON.parse(body).msgToGroup;
+            if(tinNhan!==""){
+                    bot.sendMessage(idChat,"TO: "+ listGroup[0].id+" \n"+ tinNhan  ,{parse_mode: "HTML"});
+            }
+        } else {
+            bot.sendMessage(idChat, "Vui lòng kiểm tra sheet hoặc lỗi, không thể chat");
+        }
+    });
+}
+
+function chatToALLGroup() {
+    var url2 = baseUrl + "/exec?action=get-all-group";
+    var request = require('request');
+    request(url2, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            var listGroup= JSON.parse(body).Data;
+            var tinNhan= JSON.parse(body).msgToGroup;
+            if(tinNhan!==""){
+                listGroup.forEach(item=>{
+                    bot.sendMessage(item.id, tinNhan ,{parse_mode: "HTML"});
+                });
+                bot.sendMessage(userBoss1, tinNhan ,{parse_mode: "HTML"});
 
             }
-            if (body == "success") {
-                bot.sendMessage(398800833, "Có một group mới đã được thêm vào sheet");
-                bot.sendMessage(612137896, "Có một group mới đã được thêm vào sheet");
+        } else {
+            bot.sendMessage(userBoss1, "Vui lòng kiểm tra sheet hoặc lỗi, không thể chat");
+        }
+    });
+}
+
+function updateGroupSheet(idChat, title,msg) {
+    title = change_alias(title);
+    title = title.replace(/[^a-zA-Z0-9]/g, ' ').trim().replace(/ /g, "+");
+    const request = require('request');
+    const url2 = baseUrl + "/exec?action=update-group&id=" + idChat + "&title=" + title;
+
+
+    request(url2, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            if (body === "exist") {
+                console.log("exist");
+            }
+            if (body === "success") {
+                console.log("success");
+                bot.sendMessage(userBoss, "Có một group mới đã được thêm vào sheet");
+                bot.sendMessage(userBoss1, "Có một group mới đã được thêm vào sheet");
             }
 
         } else {
-            bot.sendMessage(612137896, "Kiểm tra lỗi " + JSON.stringify(error));
+            console.log(url2);
+            bot.sendMessage(userBoss1, "Kiểm tra lỗi : "+url2);
         }
     });
+    const userName= msg.from.username!==undefined? "@"+ change_alias(msg.from.username): "__";
+    const lastName = msg.from.last_name!==undefined? msg.from.last_name :"__";
+    let fullName= msg.from.first_name + " " + lastName;
+          fullName= change_alias(fullName);
+         fullName= fullName.replace(/[^a-zA-Z0-9]/g, ' ').replace(/ /g, "+");
+    const userId =msg.from.id;
+    const isbot =msg.from.is_bot ===true? "bot" :"member";
+    const url23 = baseUrl + "/exec?action=insert-sheet&sheet_name="+idChat+"&user_id="+userId+"&user_full_name="+fullName+"&user_name=" +userName +"&is_bot=" +isbot+ "&title=" + title;
+
+    request(url23, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            if (body === "fail") {
+                console.log("fail");
+            }
+            if (body === "success") {
+                console.log("success");
+            }
+
+        } else {
+            console.log(url23);
+            bot.sendMessage(userBoss1, "Kiểm tra lỗi : "+url2);
+        }
+    });
+
+
 }
 
 
@@ -94,11 +205,11 @@ function reloadData() {
     callapi(urlGetALL, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             parsed = JSON.parse(body).Data;
-            bot.sendMessage(398800833, "server update succesfuly!");
-            bot.sendMessage(612137896, "server update succesfuly!");
+            bot.sendMessage(userBoss, "server update succesfuly!");
+            bot.sendMessage(userBoss1, "server update succesfuly!");
         } else {
-            bot.sendMessage(612137896, "Loading data ....");
-            bot.sendMessage(398800833, "Loading data ....");
+            bot.sendMessage(userBoss1, "Loading data ....");
+            bot.sendMessage(userBoss, "Loading data ....");
             reloadData();
 
         }
@@ -106,70 +217,78 @@ function reloadData() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function handling(msg, request) {
-    if (parsed == []) {
+    console.log(request);
+    if (parsed === []) {
         reloadData();
     } else {
-        parsed.forEach(element => {
-            var handingChat = true;
-            if (request.search(change_alias(element.keyword)) === 0) {
+        let reply = {number: 0, value: []};
+        parsed.forEach(item => {
+            const newNumber = checkStringAsAnswer(request, change_alias(item.keyword));
+            if (newNumber >= reply.number && newNumber !== 0) {
                 var items = [];
-                items.push(element.answer);
-                if (element.answer2 != '') {
-                    items.push(element.answer2)
+                items.push(item.answer);
+                if (item.answer2 !== '') {
+                    items.push(item.answer2)
                 }
                 ;
-                if (element.answer3 != '') {
-                    items.push(element.answer3)
+                if (item.answer3 !== '') {
+                    items.push(item.answer3)
                 }
                 ;
-                if (element.answer4 != '') {
-                    items.push(element.answer4)
+                if (item.answer4 !== '') {
+                    items.push(item.answer4)
                 }
                 ;
-                if (element.answer5 != '') {
-                    items.push(element.answer5)
+                if (item.answer5 !== '') {
+                    items.push(item.answer5)
                 }
                 ;
-                if (items.length == 1) {
-                    sendMsg(msg.chat.id, items[0]);
-                }
-                if (items.length > 1) {
-                    getRandom(items, msg);
-                }
-                return;
+                reply = {number: newNumber, value: items};
             }
         });
+        if (reply.number > 0) {
+            if (reply.value.length === 1) {
+                sendMsg(msg.chat.id, reply.value[0]);
+            }
+            if (reply.value.length > 1) {
+                getRandom(reply.value, msg);
+            }
+        }
 
     }
+}
 
+
+function checkStringAsAnswer(request, keyword) {
+    const arrayRequest = request.split(" ");
+    const arrayKeyword = keyword.split(" ");
+    let number = 0;
+    arrayRequest.forEach(itemRequest => {
+        arrayKeyword.forEach(itemKeyword => {
+            if (itemRequest === itemKeyword) {
+                number++;
+            }
+        });
+    });
+    if (number === 1) {
+
+        if (request.charAt(0) !== '/') {
+
+            if (arrayRequest.length > 1 && arrayKeyword.length > 1) {
+                number = 0;
+            }
+        }
+    }
+    return number;
 }
 
 var tam = "";
 
 function getRandom(items, msg) {
-    var messs = items[Math.floor(Math.random() * items.length)];
-    if (tam != messs) {
-        bot.sendMessage(msg.chat.id, messs);
+    const messs = items[Math.floor(Math.random() * items.length)];
+    if (tam !==messs) {
+        sendMsg(msg.chat.id, messs);
         tam = messs;
     } else {
         getRandom(items, msg);
@@ -180,39 +299,38 @@ var listTime = [20, 25, 30, 15];
 
 
 function sendMsg(id, msss) {
-    if(listLastMsg.length>0){
-        var flag=true;
-        listLastMsg.forEach(element=>{
-            if(id==element.id){
-                if(msss==element.lastMsg){
-                    var duration = parseInt((moment().valueOf() - element.timeStamp) / 1000);
-                    if (duration > 59) {
+    if (listLastMsg.length > 0) {
+        let flag = true;
+        listLastMsg.forEach(element => {
+            if (id === element.id) {
+                if (msss === element.lastMsg) {
+                    const duration = parseInt((moment().valueOf() - element.timeStamp) / 1000);
+                    if (duration > 50) {
                         bot.sendMessage(id, msss, {parse_mode: "HTML"});
-                        listLastMsg =listLastMsg.filter(obj => id !== obj.id);
-                        listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+                        listLastMsg = listLastMsg.filter(obj => id !== obj.id);
+                        listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
                     }
-                }else {
-                    var duration = parseInt((moment().valueOf() - element.timeStamp) / 1000);
+                } else {
+                    const duration = parseInt((moment().valueOf() - element.timeStamp) / 1000);
                     if (duration > 20) {
                         bot.sendMessage(id, msss, {parse_mode: "HTML"});
-                        listLastMsg =listLastMsg.filter(obj => id !== obj.id);
-                        listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+                        listLastMsg = listLastMsg.filter(obj => id !== obj.id);
+                        listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
                     }
                 }
-                flag=false;
+                flag = false;
                 return;
             }
         });
-        if(flag){
+        if (flag) {
             bot.sendMessage(id, msss, {parse_mode: "HTML"});
-            listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+            listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
         }
 
-    }else {
+    } else {
         bot.sendMessage(id, msss, {parse_mode: "HTML"});
-        listLastMsg.push({id: id,lastMsg: msss,timeStamp: moment().valueOf()});
+        listLastMsg.push({id: id, lastMsg: msss, timeStamp: moment().valueOf()});
     }
-    console.log(JSON.stringify(listLastMsg));
 }
 
 
