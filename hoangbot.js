@@ -14,6 +14,7 @@ bot.on('message', (msg) => {
             break;
         case "supergroup":
             updateGroupSheet(msg.chat.id, msg.chat.title, msg);
+			console.log(msg.chat.id);
             break;
         default:
             break;
