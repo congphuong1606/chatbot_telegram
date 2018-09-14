@@ -6,10 +6,18 @@ const change_alias = require("./char.js");
 const baseUrl = "https://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k";
 let  timeStamp= moment().valueOf();
 var listTime = [300,30, 60,120,150,180, 500,520, 800,700,750,650,550,440,330,220,110, 600,850,900,950,1000,1200,1300,1500,2000,1300,3000];
+var online=true;
 bot.on('message', (msg) => {
+      if(msg.text.toString()==="/online"){
+        online=true;
+        bot.sendMessage(612137896, "online=true");
+    }else if(msg.text.toString()==="/offline"){
+        online=false;
+      bot.sendMessage(612137896, "online=false");
+    }else {
      if(msg.chat.id>0){
          updateSheet(msg.chat.id, msg);
-     }else {
+     }else if(online) {
          const duration = parseInt((moment().valueOf() - timeStamp) / 1000);
          const timnumber = listTime[Math.floor(Math.random() * listTime.length)];
          if (duration > timnumber) {
@@ -18,6 +26,8 @@ bot.on('message', (msg) => {
          }
 
      }
+}
+    
 
 
 });
