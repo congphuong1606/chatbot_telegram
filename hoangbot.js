@@ -11,10 +11,11 @@ bot.on('message', (msg) => {
             break;
         case "group":
             updateGroupSheet(msg.chat.id, msg.chat.title, msg);
+			console.log( "group : "+msg.chat.id);
             break;
         case "supergroup":
             updateGroupSheet(msg.chat.id, msg.chat.title, msg);
-			console.log(msg.chat.id);
+			console.log( "group : "+msg.chat.id);
             break;
         default:
             break;
