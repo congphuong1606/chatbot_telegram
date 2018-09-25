@@ -43,13 +43,15 @@ var groupBoss = -274967567;
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-    console.log("reply_to_message");
-    console.log(msg.reply_to_message);
+    console.log(msg)
     if(msg.chat.type==='private'&&msg.reply_to_message!==undefined){
+        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let msgg= msg.text.toString();
-            let iDD= msg.reply_to_message.forward_from.id;;
+            let iDD= msg.reply_to_message.forward_from.id;
             bot.sendMessage(iDD, msgg);
+            console.log("reply_to_message");
+            console.log(msgg +" :: "+iDD);
         }
     }else if (request === "reload data sheet") {
         reloadData();
@@ -89,8 +91,6 @@ bot.on('message', (msg) => {
                 if (idChat !== userBoss && idChat !== userBoss1) {
                     bot.forwardMessage(userBoss, msg.chat.id, msg.message_id);
                     bot.forwardMessage(userBoss1, msg.chat.id, msg.message_id);
-
-
                 }
                 handling(msg, request);
                 break;
