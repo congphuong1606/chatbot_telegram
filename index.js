@@ -48,8 +48,9 @@ bot.on('message', (msg) => {
     if(msg.chat.type==='private'&&msg.reply_to_message!==undefined){
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let msgg= msg.text.toString;
+            console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
             bot.sendMessage(msg.reply_to_message.forward_from.id, msgg);
-            console.log("replyed_to_message");
+            console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
         }
     }else if (request === "reload data sheet") {
         reloadData();
