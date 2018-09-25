@@ -43,13 +43,12 @@ var groupBoss = -274967567;
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-    console.log("MSGGGGGGG"); console.log(msg);
-    if(msg.text.toString().split("*")[0] ==='#REPLY'){
+    console.log("reply_to_message");
+    console.log(msg.reply_to_message);
+    if(msg.reply_to_message!==undefined){
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
-            let idd= msg.text.toString.split("*")[1];
-            let msgg= msg.text.toString.split("*")[2];
-            bot.sendMessage(idd, msgg);
-            // "#REPLY*123456*Anh cũng nhớ em
+            let msgg= msg.text.toString;
+            bot.sendMessage(msg.reply_to_message.forward_from.id, msgg);
         }
     }else if (request === "reload data sheet") {
         reloadData();
