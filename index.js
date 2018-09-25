@@ -43,6 +43,7 @@ var groupBoss = -274967567;
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
+    console.log("MSGGGGGGG"); console.log(msg);
     if(msg.text.toString().split("*")[0] ==='#REPLY'){
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let idd= msg.text.toString.split("*")[1];
