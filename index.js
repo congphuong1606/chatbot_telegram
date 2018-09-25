@@ -47,14 +47,14 @@ bot.on('message', (msg) => {
     console.log(msg.reply_to_message);
     if(msg.chat.type==='private'&&msg.reply_to_message!==undefined){
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
-            let msgg= msg.text.toString;
+            let msgg= msg.text.toString();
+            let iDD= msg.reply_to_message.forward_from.id;
             console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
             console.log("ID");
-            console.log(msg.reply_to_message.forward_from.id);
+            console.log(iDD);
             console.log("msgg");
             console.log(msgg);
-            bot.sendMessage(msg.reply_to_message.forward_from.id, msgg);
-            console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
+            bot.sendMessage(iDD, msgg);
         }
     }else if (request === "reload data sheet") {
         reloadData();
