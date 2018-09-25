@@ -43,8 +43,14 @@ var groupBoss = -274967567;
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-
-    if (request === "reload data sheet") {
+    if(msg.text.toString().split("*")[0] ==='#REPLY'){
+        if (msg.from.id === userBoss || msg.from.id === userBoss1) {
+            let idd= msg.text.toString.split("*")[1];
+            let msgg= msg.text.toString.split("*")[2];
+            bot.sendMessage(idd, msgg);
+            // "#REPLY*123456*Anh cũng nhớ em
+        }
+    }else if (request === "reload data sheet") {
         reloadData();
     } else if (request === "/stopothergroup") {
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
@@ -82,6 +88,9 @@ bot.on('message', (msg) => {
                 if (idChat !== userBoss && idChat !== userBoss1) {
                     bot.forwardMessage(userBoss, msg.chat.id, msg.message_id);
                     bot.forwardMessage(userBoss1, msg.chat.id, msg.message_id);
+                    bot.sendMessage(userBoss, msg.chat.id +" :: " +msg.text.toString());
+                    bot.sendMessage(userBoss1, msg.chat.id +" :: " +msg.text.toString());
+
                 }
                 handling(msg, request);
                 break;
