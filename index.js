@@ -48,12 +48,7 @@ bot.on('message', (msg) => {
     if(msg.chat.type==='private'&&msg.reply_to_message!==undefined){
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let msgg= msg.text.toString();
-            let iDD= msg.reply_to_message.forward_from.id;
-            console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
-            console.log("ID");
-            console.log(iDD);
-            console.log("msgg");
-            console.log(msgg);
+            let iDD= msg.reply_to_message.forward_from.id;;
             bot.sendMessage(iDD, msgg);
         }
     }else if (request === "reload data sheet") {
@@ -94,8 +89,7 @@ bot.on('message', (msg) => {
                 if (idChat !== userBoss && idChat !== userBoss1) {
                     bot.forwardMessage(userBoss, msg.chat.id, msg.message_id);
                     bot.forwardMessage(userBoss1, msg.chat.id, msg.message_id);
-                    bot.sendMessage(userBoss, msg.chat.id +" :: " +msg.text.toString());
-                    bot.sendMessage(userBoss1, msg.chat.id +" :: " +msg.text.toString());
+
 
                 }
                 handling(msg, request);
