@@ -45,10 +45,11 @@ bot.on('message', (msg) => {
     var idChat = msg.chat.id;
     console.log("reply_to_message");
     console.log(msg.reply_to_message);
-    if(msg.reply_to_message!==undefined){
+    if(msg.chat.type==='private'&&msg.reply_to_message!==undefined){
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let msgg= msg.text.toString;
             bot.sendMessage(msg.reply_to_message.forward_from.id, msgg);
+            console.log("replyed_to_message");
         }
     }else if (request === "reload data sheet") {
         reloadData();
