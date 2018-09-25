@@ -49,6 +49,10 @@ bot.on('message', (msg) => {
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let msgg= msg.text.toString;
             console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
+            console.log("ID");
+            console.log(msg.reply_to_message.forward_from.id);
+            console.log("msgg");
+            console.log(msgg);
             bot.sendMessage(msg.reply_to_message.forward_from.id, msgg);
             console.log("replyed_to_messageSSSSSSSSSSSSSSSSSSSSSSSsss");
         }
