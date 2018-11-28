@@ -22,7 +22,7 @@
     "moment": "^2.22.2",
     "node-telegram-bot-api": "^0.30.0",
     "request": "^2.88.0",
-    "ws": "^0.4.32"
+    "ws": "^6.1.2"
   },
   "preferGlobal": true,
   "bin": {
