@@ -1,4 +1,4 @@
-var WebSocketServer = require("ws").Server
+﻿var WebSocketServer = require("ws").Server
 var http = require("http")
 var express = require("express")
 var app = express()
@@ -319,7 +319,7 @@ function saveResult(result) {
     listMsgOld.push(msgOld);
     listMsgOld.forEach(item => {
         if (item.chatId === chatId) {
-            if ((date - item.time) > (3 * 60 * 1000)) {
+            if ((date - item.time) > (3 * 60 * 500)) {
                 deleteMsgOld(item);
             }
         }
