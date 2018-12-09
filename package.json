@@ -16,6 +16,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "after-load": "^1.0.4",
+    "cheerio": "^1.0.0-rc.2",
     "commander": "^2.3.0",
     "content-disposition": "^0.3.0",
     "express": "^4.9.8",

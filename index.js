@@ -41,10 +41,56 @@ var userBoss1 = 612137896;
 var groupBoss = -274967567;
 
 
+function getMinSell(array) {
+    let date = parseFloat(array[0].date);
+    let buy = parseFloat(array[0].price);
+    array.forEach(item => {
+        if (date < parseFloat(item.date)) {
+            date= parseFloat(item.date)
+            buy = parseFloat(item.price);
+        }
+    });
+    return buy;
+}
+
+
+
+function getAPIREMI(msg) {
+
+    const request = require('request');
+    const urlbtc = 'https://api.remitano.com/api/v1/markets/BTCVND/bc_trades?since=' + (Date.now() - 120000);
+
+   request(urlbtc, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            let btcbuyArray =[];
+            let btcsellArray =[];
+            JSON.parse(body).forEach(item=>{
+                if(item.type=='buy'){
+                    btcbuyArray.push(item);
+                }
+            });
+            JSON.parse(body).forEach(item=>{
+                if(item.type=='sell'){
+                    btcsellArray.push(item);
+                }
+            });
+            let minSellBTC= getMinSell(btcsellArray);
+            let maxBuyBTC= getMinSell(btcbuyArray);
+            bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
+            bot.sendMessage(msg.chat.id, 'BTC SELL: '+ maxBuyBTC);
+
+        } else {
+            console.log('kong thanh cong')
+            console.log(error)
+        }
+    });
+
+}
+
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-    console.log(msg)
+    console.log('.')
     if (msg.chat.type === 'private' && msg.reply_to_message !== undefined) {
         console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
@@ -84,8 +130,9 @@ bot.on('message', (msg) => {
         } else {
             bot.sendMessage(msg.from.id, "Lệnh này không dành cho bạn (/chattoallgroup)");
         }
-    }
-    else {
+    } else if (request === '/remibtc') {
+        getAPIREMI(msg);
+    } else {
 
         switch (msg.chat.type) {
             case "private":
