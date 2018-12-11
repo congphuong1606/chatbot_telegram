@@ -57,16 +57,15 @@ function getMinSell(array) {
 
 function getAPIREMI(msg) {
 
-    const request = require('request');
+   const request = require('request');
     const urlbtc = 'http://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=rpr';
 
    request(urlbtc, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            let result = body.Data;
-            let texttt = 'REMITANO  SELL   BUY';
-            bot.sendMessage(msg.chat.id,texttt+  body);
+            let texttt = 'Remitano  SELL     BUY';
+            bot.sendMessage(msg.chat.id,texttt +  body);
 
-           /* bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
+          /*  bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
             bot.sendMessage(msg.chat.id, 'BTC SELL: '+ maxBuyBTC);*/
 
         } else {
