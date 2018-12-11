@@ -58,26 +58,16 @@ function getMinSell(array) {
 function getAPIREMI(msg) {
 
     const request = require('request');
-    const urlbtc = 'https://api.remitano.com/api/v1/markets/BTCVND/bc_trades?since=' + (Date.now() - 120000);
+    const urlbtc = 'http://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=rpr';
 
    request(urlbtc, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            let btcbuyArray =[];
-            let btcsellArray =[];
-            JSON.parse(body).forEach(item=>{
-                if(item.type=='buy'){
-                    btcbuyArray.push(item);
-                }
-            });
-            JSON.parse(body).forEach(item=>{
-                if(item.type=='sell'){
-                    btcsellArray.push(item);
-                }
-            });
-            let minSellBTC= getMinSell(btcsellArray);
-            let maxBuyBTC= getMinSell(btcbuyArray);
-            bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
-            bot.sendMessage(msg.chat.id, 'BTC SELL: '+ maxBuyBTC);
+            let result = body.Data;
+            let texttt = 'REMITANO\\n';
+            bot.sendMessage(msg.chat.id,texttt+  body);
+
+           /* bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
+            bot.sendMessage(msg.chat.id, 'BTC SELL: '+ maxBuyBTC);*/
 
         } else {
             console.log('kong thanh cong')
@@ -130,7 +120,7 @@ bot.on('message', (msg) => {
         } else {
             bot.sendMessage(msg.from.id, "Lệnh này không dành cho bạn (/chattoallgroup)");
         }
-    } else if (request === '/remibtc') {
+    } else if (request === '/remi') {
         getAPIREMI(msg);
     } else {
 
