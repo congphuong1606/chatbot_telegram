@@ -62,7 +62,7 @@ function getAPIREMI(msg) {
 
    request(urlbtc, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            let texttt = 'Remitano  SELL     BUY';
+            let texttt = 'Remitano  SELL      BUY';
             bot.sendMessage(msg.chat.id,texttt +  body);
 
           /*  bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
