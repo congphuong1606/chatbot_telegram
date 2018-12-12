@@ -7,7 +7,7 @@ app.use(express.static(__dirname + "/"))
 var server = http.createServer(app)
 server.listen(port)
 var wss = new WebSocketServer({server: server})
-console.log("websocket server created")
+
 wss.on("connection", function (ws) {
     var id = setInterval(function () {
         ws.send(JSON.stringify(new Date()), function () {
@@ -56,38 +56,47 @@ function getMinSell(array) {
 
 
 function getAPIREMI(msg) {
-
    const request = require('request');
     const urlbtc = 'http://script.google.com/macros/s/AKfycbzh3oR1kj1MoieKw16Re4ee0TH76-khSMaovjOlSFrpUJtnp9k/exec?action=rpr';
-
    request(urlbtc, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-            let texttt = 'Remitano  SELL      BUY';
+            let texttt = 'Remitano   SELL       BUY';
             bot.sendMessage(msg.chat.id,texttt +  body);
-
-          /*  bot.sendMessage(msg.chat.id, 'BTC BUY: '+ minSellBTC);
-            bot.sendMessage(msg.chat.id, 'BTC SELL: '+ maxBuyBTC);*/
-
         } else {
-            console.log('kong thanh cong')
-            console.log(error)
         }
     });
+
+}
+
+function sendToGroupMe(msg) {
+    let array =msg.text.split(' ');
+    let flag =false;
+    array.forEach(item=>{
+        item=item.toLowerCase();
+        if(item==='mua'||item==='ban'||item==='bán'||item==='buy'||item==='sell'){
+            flag =true;
+        }
+    })
+        if(flag){
+            bot.forwardMessage(-343460402, msg.chat.id, msg.message_id);
+
+        }
+
+
 
 }
 
 bot.on('message', (msg) => {
     var request = change_alias(msg.text.toString());
     var idChat = msg.chat.id;
-    console.log('.')
+
     if (msg.chat.type === 'private' && msg.reply_to_message !== undefined) {
-        console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             let msgg = msg.text.toString();
             let iDD = msg.reply_to_message.forward_from.id;
             bot.sendMessage(iDD, msgg);
-            console.log("reply_to_message");
-            console.log(msgg + " :: " + iDD);
+
         }
     } else if (request === "reload data sheet") {
         reloadData();
@@ -115,7 +124,7 @@ bot.on('message', (msg) => {
     else if (request === "/testchattoallgroup") {
         if (msg.from.id === userBoss || msg.from.id === userBoss1) {
             testChatToALLGroup(idChat);
-            console.log("testchattoallgroup");
+
         } else {
             bot.sendMessage(msg.from.id, "Lệnh này không dành cho bạn (/chattoallgroup)");
         }
@@ -132,7 +141,7 @@ bot.on('message', (msg) => {
                 handling(msg, request, 'user');
                 break;
             case "group":
-
+                sendToGroupMe(msg);
                 if (stopOtherGroup) {
                     if (idChat === groupBoss) {
                         handling(msg, request, 'group');
@@ -144,7 +153,7 @@ bot.on('message', (msg) => {
 
                 break;
             case "supergroup":
-
+                sendToGroupMe(msg);
                 if (stopOtherGroup) {
                     if (idChat === groupBoss) {
                         handling(msg, request, 'group');
@@ -209,16 +218,16 @@ function updateGroupSheet(idChat, title, msg) {
     request(url2, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             if (body === "exist") {
-                console.log("exist");
+
             }
             if (body === "success") {
-                console.log("success");
+
                 bot.sendMessage(userBoss, "Có một group mới đã được thêm vào sheet");
                 bot.sendMessage(userBoss1, "Có một group mới đã được thêm vào sheet");
             }
 
         } else {
-            console.log(url2);
+
             bot.sendMessage(userBoss1, "Kiểm tra lỗi : " + url2);
         }
     });
@@ -234,14 +243,14 @@ function updateGroupSheet(idChat, title, msg) {
     request(url23, function (error, response, body) {
         if (!error && response.statusCode === 200) {
             if (body === "fail") {
-                console.log("fail");
+
             }
             if (body === "success") {
-                console.log("success");
+
             }
 
         } else {
-            console.log(url23);
+
             bot.sendMessage(userBoss1, "Kiểm tra lỗi : " + url2);
         }
     });
@@ -267,7 +276,7 @@ function reloadData() {
 }
 
 function handling(msg, request, mode) {
-    console.log(request);
+
     if (parsed === []) {
         reloadData();
     } else {
@@ -364,7 +373,7 @@ function saveResult(result) {
 }
 
 function deleteMsgOld(item) {
-    console.log("đã xóa ")
+
     bot.deleteMessage(item.chatId, '' + item.id, item.from);
 }
 
