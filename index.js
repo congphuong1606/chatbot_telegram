@@ -78,7 +78,7 @@ function sendToGroupMe(msg) {
         }
     })
         if(flag){
-            bot.forwardMessage(-343460402, msg.chat.id, msg.message_id);
+            bot.forwardMessage(groupBoss, msg.chat.id, msg.message_id);
 
         }
 
